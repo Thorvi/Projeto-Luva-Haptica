@@ -28,7 +28,7 @@ public class Position : MonoBehaviour
 
         float x = float.Parse(receiver.position[0]) / -50f;
         float y = float.Parse(receiver.position[1]) / -50f;
-        float z = float.Parse(receiver.position[2]) / -30f;
+        float z = float.Parse(receiver.position[2]) / -60f;
 
         Vector3 pos = new Vector3(x, y, transform.position.z);
         //transform.position = Vector3.Lerp(transform.position, pos, 100f * Time.deltaTime);

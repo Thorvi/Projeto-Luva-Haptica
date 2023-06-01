@@ -1,5 +1,6 @@
 import cv2
 import socket
+import numpy as np
 import mediapipe as mp
 
 mp_drawing = mp.solutions.drawing_utils
@@ -19,7 +20,23 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 ###################################
 
+fx = 200  # Valor de escala focal em pixels
+fy = 200
 
+
+constant_distance = 1
+
+def estimate_depth(x, y, cx, cy):
+    # Normaliza as coordenadas de pixel
+    u_normalized = (x - cx) / fx
+    v_normalized = (y - cy) / fy
+
+    # Estimativa da coordenada Z
+    z = constant_distance / np.sqrt(u_normalized**2 + v_normalized**2 + 1)
+
+    return z
+
+###########################################
 
 cap = cv2.VideoCapture(0)
 
@@ -54,29 +71,15 @@ with mp_hands.Hands(
         mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
         
-        ###   PUNHO  
-        punho_x = format(hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].x * largura, ".0f")
-        punho_y = format(hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].y * altura, ".0f")
-        punho_z = format(hand_landmarks.landmark[mp_hands.HandLandmark.WRIST].z * largura * altura * 50, ".5f")
-        '''
-        ###   INDICADOR
-        indicador_x = format(hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].x * largura, ".0f")
-        indicador_y = format(hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y * altura, ".0f")
-        indicador_z = format(hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].z * largura * altura * 100000, ".0f")
 
-        ###   INDICADOR
-        dedao_x = format(hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].x * largura, ".0f")
-        dedao_y = format(hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].y * altura, ".0f")
-        dedao_z = format(hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].z * largura * altura * 100000, ".0f")
-        '''
         data = []
         for landmark in hand_landmarks.landmark:
-          data.extend([format(landmark.x * largura, ".0f"), format(landmark.y * altura, ".0f"), format(landmark.z, ".8f")])
+          data.extend([format(landmark.x * largura, ".0f"), format(landmark.y * altura, ".0f"), format(estimate_depth(landmark.x * largura, landmark.y * altura, largura, altura), ".3f")])
 
-        data[2] = data[5]
+        data[2] = data[5] #Fator de Correcao
         #data[5] = data[29]
 
-        print(data)
+        print(data[26])
 
   
         if(conectar):
@@ -86,6 +89,9 @@ with mp_hands.Hands(
 
     # Flip the image horizontally for a selfie-view display.
     cv2.imshow('MediaPipe Hands', cv2.flip(image, 1))
+    
     if cv2.waitKey(5) & 0xFF == 27:
-      break
-cap.release()
+        cap.release()
+        cv2.destroyAllWindows()
+        break
+        

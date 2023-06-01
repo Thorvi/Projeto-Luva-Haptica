@@ -18,7 +18,7 @@ public class Hand : MonoBehaviour
     {
         offsetCamX = -30f;
         offsetCamY = -30f;
-        offsetCamZ = -40f;
+        offsetCamZ = -50f;
     }
 
     // Update is called once per frame
@@ -35,7 +35,7 @@ public class Hand : MonoBehaviour
 
             float x = (float.Parse(receiver.position[i * 3]) / 10f) + offsetCamX;
             float y = (float.Parse(receiver.position[i * 3 + 1]) / -10f) - offsetCamY;
-            float z = (float.Parse(receiver.position[i * 3 + 2]) / 700000f) - offsetCamZ;
+            float z = (float.Parse(receiver.position[i * 3 + 2]) / -11f) - offsetCamZ;
 
             
 
