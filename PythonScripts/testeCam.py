@@ -1,25 +1,34 @@
-import socket
-import json
-import time
+import cv2
+import pseyepy
 
-HOST = ''    # endereço IP do servidor
-PORT = 5005  # porta de conexão
+# Inicializa o pseyepy
+pseyepy.init()
 
-# cria o socket do servidor e faz a ligação com o endereço e porta
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind((HOST, PORT))
-    s.listen()
-    conn, addr = s.accept()
-    with conn:
-        print('Conexão estabelecida com', addr)
+# Obtém a lista de dispositivos
+devices = pseyepy.get_devices()
 
-        while True:
-            # obtém os dados do Mediapipe ou de qualquer outra fonte
-            # e os armazena em uma variável
-            tracking_data = 'x:1.23,y:4.56,z:7.89'
+# Verifica se há dispositivos conectados
+if len(devices) == 0:
+    print("Nenhum dispositivo PlayStation Eye encontrado.")
+    exit()
 
-            # envia os dados para a Unity
-            conn.sendall(tracking_data.encode())
+# Abre o primeiro dispositivo encontrado
+device = pseyepy.PSEye(devices[0])
 
-            # aguarda um tempo antes de enviar novos dados
-            time.sleep(0.1)
+# Inicializa a captura de vídeo
+device.start()
+
+while True:
+    # Obtém o quadro de vídeo
+    frame = device.get_frame()
+
+    # Exibe o quadro de vídeo
+    cv2.imshow('Câmera', frame)
+
+    # Verifica se a tecla 'q' foi pressionada para sair do loop
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Para a captura de vídeo e fecha a janela
+device.stop()
+cv2.destroyAllWindows()

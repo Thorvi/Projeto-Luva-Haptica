@@ -31,7 +31,7 @@ public class Hand : MonoBehaviour
     }
 
     void Points() {
-        for(int i = 0; i < 21; i++) {
+        for(int i = 0; i < points.Length; i++) {
 
             float x = (float.Parse(receiver.position[i * 3]) / 10f) + offsetCamX;
             float y = (float.Parse(receiver.position[i * 3 + 1]) / -10f) - offsetCamY;
@@ -53,7 +53,8 @@ public class Hand : MonoBehaviour
     }
 
     void Linhas() {
-        for(int i = 0; i < 21; i++) {
+        for(int i = 0; i < linhas.Length; i++) {
+
             linhas[i].startWidth = 1f;
             linhas[i].endWidth = 1f;
             
@@ -67,30 +68,21 @@ public class Hand : MonoBehaviour
                 linhas[i].SetPosition(0, points[i].transform.position);
                 linhas[i].SetPosition(1, points[i + 1].transform.position);
             }
-            else if(i != 20) {
-                linhas[i].SetPosition(0, points[i + 1].transform.position);
-                linhas[i].SetPosition(1, points[i + 2].transform.position);
-            }
 
-            if(i == 5 || i == 17) {
-                linhas[i].SetPosition(0, points[0].transform.localPosition);
-                linhas[i].SetPosition(1, points[i].transform.localPosition);
+            else if(i + 5 < linhas.Length) {
+                linhas[i].SetPosition(0, points[i + 1].transform.localPosition);
+                linhas[i].SetPosition(1, points[i + 5].transform.localPosition);
+
             }
 
             else {
-                linhas[9].SetPosition(0, points[5].transform.localPosition);
-                linhas[9].SetPosition(1, points[9].transform.localPosition);
+                linhas[16].SetPosition(0, points[0].transform.localPosition);
+                linhas[16].SetPosition(1, points[5].transform.localPosition);
 
-                linhas[13].SetPosition(0, points[9].transform.localPosition);
-                linhas[13].SetPosition(1, points[13].transform.localPosition);
-
-                linhas[20].SetPosition(0, points[9].transform.localPosition);
-                linhas[20].SetPosition(1, points[13].transform.localPosition);
+                linhas[20].SetPosition(0, points[0].transform.localPosition);
+                linhas[20].SetPosition(1, points[17].transform.localPosition);
             }
-
-        }
-
-        
+        }        
     }
 }
 

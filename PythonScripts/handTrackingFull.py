@@ -3,6 +3,8 @@ import socket
 import numpy as np
 import mediapipe as mp
 
+cap = cv2.VideoCapture(0)
+
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
@@ -15,8 +17,6 @@ HOST = 'localhost'    # endereço IP do servidor
 PORT = 5005  # porta de conexão
 client = (HOST, PORT)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-
 
 ###################################
 
@@ -38,13 +38,12 @@ def estimate_depth(x, y, cx, cy):
 
 ###########################################
 
-cap = cv2.VideoCapture(0)
-
 with mp_hands.Hands(
     max_num_hands = 1,
     model_complexity=1,
     min_detection_confidence=0.7,
     min_tracking_confidence=0.7) as hands:
+  
   while cap.isOpened():
     success, image = cap.read()
     altura, largura, _ = image.shape
@@ -70,11 +69,10 @@ with mp_hands.Hands(
       for hand_landmarks in results.multi_hand_landmarks: 
         mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
-        
-
         data = []
         for landmark in hand_landmarks.landmark:
-          data.extend([format(landmark.x * largura, ".0f"), format(landmark.y * altura, ".0f"), format(estimate_depth(landmark.x * largura, landmark.y * altura, largura, altura), ".3f")])
+          data.extend([format(landmark.x * largura, ".0f"), format(landmark.y * altura, ".0f"), format(estimate_depth(landmark.x * altura, landmark.y * largura, largura, altura), ".3f")])
+          #data.extend([format(landmark.x * largura, ".0f"), format(landmark.y * altura, ".0f"), 0])
 
         data[2] = data[5] #Fator de Correcao
         #data[5] = data[29]

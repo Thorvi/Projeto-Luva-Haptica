@@ -6,7 +6,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
-conectar = True
+conectar = False
 
 ################################### SERVIDOR
 
@@ -21,7 +21,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 with mp_hands.Hands(
     model_complexity=0,
