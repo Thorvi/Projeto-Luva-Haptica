@@ -14,42 +14,99 @@ public class Hand : MonoBehaviour
     public float offsetCamY;
     public float offsetCamZ;
 
+
+    private bool boolCalibrar = false;
+    private Material material;
+    private float[] distance1;
+
     void Start()
     {
         offsetCamX = -30f;
         offsetCamY = -30f;
         offsetCamZ = -50f;
+
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        Points();
-        //Linhas();
+        MovePoints();
+        Linhas(); //Construção das falanges
+
+    
+        if(Input.GetKeyDown(KeyCode.C)) {
+            boolCalibrar = !boolCalibrar;
+            distance1 = Distancia(points);
+            Calibrar();      
+        }
+
+        
+        
+        
+        if(boolCalibrar) 
+            for(int i = 0; i < points.Length; i++)
+                points[i].GetComponent<Renderer>().material.SetColor("_Color", Color.green);
+        
+        else
+            for(int i = 0; i < points.Length; i++)
+                points[i].GetComponent<Renderer>().material.SetColor("_Color", Color.red);
 
         
     }
 
-    void Points() {
+    void Calibrar() {
+        distance1 = Distancia(points);
+    }
+
+
+    float[] Distancia(GameObject[] elements) {  
+
+        float[] distanceBetweenPoints = new float[elements.Length];
+
+        for(int i = 0; i < elements.Length; i++) {
+
+            if(i == 0) {
+                distanceBetweenPoints[i] = Vector3.Distance(elements[0].transform.position, elements[1].transform.position);
+                i++;
+                distanceBetweenPoints[i] = Vector3.Distance(elements[0].transform.position, elements[5].transform.position);
+                i++;
+                distanceBetweenPoints[i] = Vector3.Distance(elements[0].transform.position, elements[17].transform.position);
+            }
+
+            else if(i % 4 != 0 && i < 20) {
+                distanceBetweenPoints[i] = Vector3.Distance(elements[i].transform.position, elements[i + 1].transform.position);
+            } 
+
+            else 
+                distanceBetweenPoints[i] = Vector3.Distance(elements[5].transform.position, elements[9].transform.position);
+                i++;
+                distanceBetweenPoints[i] = Vector3.Distance(elements[9].transform.position, elements[13].transform.position);
+                i++;
+                distanceBetweenPoints[i] = Vector3.Distance(elements[13].transform.position, elements[17].transform.position);            
+        } 
+
+        return distanceBetweenPoints;
+
+    }
+
+    void MovePoints() {
+  
+
         for(int i = 0; i < points.Length; i++) {
 
             float x = (float.Parse(receiver.position[i * 3]) / 10f) + offsetCamX;
             float y = (float.Parse(receiver.position[i * 3 + 1]) / -10f) - offsetCamY;
-            float z = (float.Parse(receiver.position[i * 3 + 2]) / -11f) - offsetCamZ;
+            float z = (float.Parse(receiver.position[i * 3 + 2]) / 3f) - offsetCamZ;
 
-            
 
-            //points[i].transform.localPosition = new Vector3(x, y, z);
+            Vector3 pos = new Vector3(x, y, z);  
+                
+            points[i].transform.position = Vector3.Lerp(points[i].transform.position, pos, 100f * Time.deltaTime);
 
-            Vector3 pos = new Vector3(x, y, z);
-            
-
-            points[i].transform.position = Vector3.Lerp(points[i].transform.position, pos, 17f * Time.deltaTime);
- 
-            Linhas();
+            //if(distance1[i] < Distancia(points)[i])
+           
         }
-
-        
     }
 
     void Linhas() {

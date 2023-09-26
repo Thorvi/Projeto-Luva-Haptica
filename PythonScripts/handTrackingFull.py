@@ -71,8 +71,8 @@ with mp_hands.Hands(
 
         data = []
         for landmark in hand_landmarks.landmark:
-          data.extend([format(landmark.x * largura, ".0f"), format(landmark.y * altura, ".0f"), format(estimate_depth(landmark.x * altura, landmark.y * largura, largura, altura), ".3f")])
-          #data.extend([format(landmark.x * largura, ".0f"), format(landmark.y * altura, ".0f"), 0])
+          #data.extend([format(landmark.x * largura, ".0f"), format(landmark.y * altura, ".0f"), format(estimate_depth(landmark.x * altura, landmark.y * largura, largura, altura), ".3f")])
+          data.extend([format(landmark.x * largura, ".0f"), format(landmark.y * altura, ".0f"), 0])
 
         data[2] = data[5] #Fator de Correcao
         #data[5] = data[29]
