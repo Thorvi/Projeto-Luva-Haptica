@@ -130,4 +130,3 @@ if __name__ == '__main__':
     P1 = get_projection_matrix(0)
     P2 = get_projection_matrix(1)
     
-    mp(P1, P2)
