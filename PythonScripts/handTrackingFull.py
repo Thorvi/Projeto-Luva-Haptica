@@ -2,6 +2,7 @@ import cv2
 import socket
 import numpy as np
 import mediapipe as mp
+import math
 
 cap = cv2.VideoCapture(0)
 
@@ -20,29 +21,14 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 ###################################
 
-fx = 200  # Valor de escala focal em pixels
-fy = 200
-
-
-constant_distance = 1
-
-def estimate_depth(x, y, cx, cy):
-    # Normaliza as coordenadas de pixel
-    u_normalized = (x - cx) / fx
-    v_normalized = (y - cy) / fy
-
-    # Estimativa da coordenada Z
-    z = constant_distance / np.sqrt(u_normalized**2 + v_normalized**2 + 1)
-
-    return z
-
-###########################################
+def distancia(xa, ya, xb, yb):
+  return ((xb-xa)**2 + (yb-ya)**2)**0.5
 
 with mp_hands.Hands(
     max_num_hands = 1,
     model_complexity=1,
-    min_detection_confidence=0.7,
-    min_tracking_confidence=0.7) as hands:
+    min_detection_confidence=0.9,
+    min_tracking_confidence=0.9) as hands:
   
   while cap.isOpened():
     success, image = cap.read()
@@ -70,18 +56,47 @@ with mp_hands.Hands(
         mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
         data = []
+        
         for landmark in hand_landmarks.landmark:
-          #data.extend([format(landmark.x * largura, ".0f"), format(landmark.y * altura, ".0f"), format(estimate_depth(landmark.x * altura, landmark.y * largura, largura, altura), ".3f")])
-          data.extend([format(landmark.x * largura, ".0f"), format(landmark.y * altura, ".0f"), 0])
+          
+          data.extend([format(landmark.x * largura, ".0f"), format(landmark.y * altura, ".0f")])
 
-        data[2] = data[5] #Fator de Correcao
-        #data[5] = data[29]
+        distanciaFixa = distancia(float(data[0]),float(data[1]), float(data[34]), float(data[35]))
+        
 
-        print(data[26])
+        cv2.circle(image, (int(data[18]), int(data[19])), int(distanciaFixa * 0.1), (255, 255, 0), 2)
 
+        pontos = []
+        
+        distanciaCorrigida = []
+        pontos.extend([data[18], data[19]])
+        pontos.extend([format(distanciaFixa * 0.2, ".3f")])
+
+        for i in range(5):
+          pontoAtual = 8 * (i + 1) # 4, 8, 12, 16, 20
+          
+
+          xa = int(data[0])
+          ya = int(data[1])
+
+          xb = int(data[pontoAtual])
+          yb = int(data[pontoAtual + 1])
+
+          distanciaAux = distancia(xa, ya, xb, yb)
+
+          distanciaCorrigida.extend([format(distanciaAux / distanciaFixa, ".3f")])
+          
+
+          cv2.line(image, (xa, ya), (xb, yb), (255, 0, 0), thickness = 2)
+          
+        
+        pontos.extend(distanciaCorrigida)
+        print("\n", pontos)
+          
+       
   
         if(conectar):
-          data_str = ','.join(map(str,data)).encode()
+          data_str = ','.join(map(str, pontos)).encode()
           sock.sendto(data_str, client)
           
 

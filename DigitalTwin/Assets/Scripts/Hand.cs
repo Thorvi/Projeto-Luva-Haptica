@@ -93,7 +93,7 @@ public class Hand : MonoBehaviour
     void MovePoints() {
   
 
-        for(int i = 0; i < points.Length; i++) {
+        for(int i = 0; (i * 3 + 2) < points.Length; i++) {
 
             float x = (float.Parse(receiver.position[i * 3]) / 10f) + offsetCamX;
             float y = (float.Parse(receiver.position[i * 3 + 1]) / -10f) - offsetCamY;

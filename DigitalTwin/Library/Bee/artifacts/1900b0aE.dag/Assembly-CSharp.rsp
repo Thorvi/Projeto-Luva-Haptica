@@ -362,6 +362,7 @@
 "Assets/Scripts/Colisor.cs"
 "Assets/Scripts/CollisorController.cs"
 "Assets/Scripts/Hand.cs"
+"Assets/Scripts/HandController.cs"
 "Assets/Scripts/Linhas.cs"
 "Assets/Scripts/Objeto.cs"
 "Assets/Scripts/Ossos.cs"

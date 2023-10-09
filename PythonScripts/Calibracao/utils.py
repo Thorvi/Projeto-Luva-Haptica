@@ -27,6 +27,7 @@ def DLT(P1, P2, point1, point2):
     #print('Triangulated point: ')
     #print(Vh[3,0:3]/Vh[3,3])
     return Vh[3,0:3]/Vh[3,3]
+    #return Vh[3,2] / Vh[3,3]
 
 def read_camera_parameters(camera_id):
 

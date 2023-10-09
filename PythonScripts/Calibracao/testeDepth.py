@@ -74,11 +74,16 @@ def Contornos(tracking, cam1, cam2):
         
         pos = DLT(P1, P2, centroTracker1, centroTracker2)
     
-        #pos = np.vectorize(pos)
+       
+
+        for i in range(3):
+            pos[i] = format(pos[i], ".0f")
+        
+        print(pos)
         
         
 
-        imagens = cv2.vconcat([image1, image2])
+        imagens = cv2.hconcat([image1, image2])
         cv2.imshow("Imagens", imagens)
         
         ServidorSend(data = pos)
