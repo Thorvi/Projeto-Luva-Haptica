@@ -1,0 +1,16 @@
+1 - ESP32
+1 - Arduino Nano (pode ser o UNO)
+1 - Modulo Bluetooth HC-06
+5 - Vibracall 1027
+5 - Eletroima 5V
+5 - Ima de Neodimio (diametro 8mm)
+1 - Luva (Aquelas sem as pontas dos dedos)
+-------
+Driver dos Eletroimas
+5 - Resistor 4.7k
+5 - Transistor BC547
+5 - Diodo 1N4007
+
+
+
+
