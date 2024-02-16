@@ -1,53 +1,58 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.IO.Ports;
+using UnityEngine;
 
 public class SerialController : MonoBehaviour
 {
-    public GameObject[] dedos;
-
-    public string porta = "COM5";
-    public int taxaDeTransmissao = 9600;
-
-    private SerialPort portaSerial;
-
-    private bool[] dedosTouch;
-
+    // Start is called before the first frame update
+    [Header("Serial Port")]
+    [SerializeField] private string port;
+    private SerialPort ESPSerialPort;
+    private string[] data;
     void Start()
     {
-        portaSerial = new SerialPort(porta, taxaDeTransmissao);
-        portaSerial.Open();
-
-        dedosTouch = new bool[dedos.Length];
+        int baudRate = 115200;
+        ESPSerialPort = new SerialPort(port, baudRate);
+        ESPSerialPort.Open();
     }
 
-    // Update is called once per frame
-    void Update() {
-
-        int i = 0;
-
-        foreach (GameObject obj in dedos) {
-            
-            Colisor Colisor = obj.GetComponent<Colisor>();
-
-            dedosTouch[i] = Colisor.touch;
-            i++;
-        }
-
-        EnviarDados(dedosTouch);
+    void Update()
+    {
+        ReadCOMPort();
     }
 
-    void EnviarDados(bool[] dado) {
+    void ReadCOMPort()
+    {
+        string rawData;
 
-        byte[] bytesDoVetor = new byte[dado.Length];
-
-        for (int i = 0; i < dado.Length; i++)
+        if (!ESPSerialPort.IsOpen)
         {
-            bytesDoVetor[i] = dado[i] ? (byte)1 : (byte)0;
+            Debug.Log("Serial port unavailable");
+            return;
         }
+        
+        rawData = ESPSerialPort.ReadLine();
+        data = rawData.Split(", ");
+        // Debug.Log(rawData);
+    }
+    
+    void WriteCOMPort(string command)
+    {
 
-        // Envia a sequência de bytes pela porta serial
-        portaSerial.Write(bytesDoVetor, 0, bytesDoVetor.Length);
+    }
+
+    void OnDestroy()
+    {
+        if (ESPSerialPort.IsOpen)
+        {
+            ESPSerialPort.Close();  // Fecha a porta serial
+        }
+    }
+
+    public string[] GetData()
+    {
+        //if(data.Length > 0)
+        return data;
     }
 }

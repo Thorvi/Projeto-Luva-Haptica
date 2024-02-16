@@ -18,14 +18,14 @@ public class HandController : MonoBehaviour
     {
         if (receiver.position.Length > 0)
         {
-            float x = (float.Parse(receiver.position[0]) / -10.3f);
+            float x = (float.Parse(receiver.position[0]) / 10.3f);
             float y = (float.Parse(receiver.position[1]) / -10.3f);
             float z = (float.Parse(receiver.position[2]) / 500f);
 
 
             Vector3 position = new Vector3(x, y, z);
 
-            hand.transform.position = Vector3.Lerp(hand.transform.position, position, 10f * Time.deltaTime);
+            hand.transform.position = Vector3.Lerp(hand.transform.position, position, 5f * Time.deltaTime);
         }
     }
 
